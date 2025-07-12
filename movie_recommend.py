@@ -23,7 +23,7 @@ def load_data():
     similarity_file = "artifacts/similarity_compressed.joblib"
 
     movie_file_id = "1p_Y0LjDV8stiUaNsDZvzECJ6rydgt4yR"
-    similarity_file_id = "1ojEtIeXADD8_s13QUfRT0Jzg68M3Y9I_"
+    similarity_file_id = "1aTaFxMtggJiCHJBpzC1bZrXT5Gccmmbo"
 
     movie_url = f"https://drive.google.com/uc?id={movie_file_id}"
     similarity_url = f"https://drive.google.com/uc?id={similarity_file_id}"
