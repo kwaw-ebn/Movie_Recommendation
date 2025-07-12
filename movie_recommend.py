@@ -15,6 +15,11 @@ import joblib
 import gdown
 import os
 
+import os
+import joblib
+import gdown
+import streamlit as st
+
 @st.cache_data
 def load_data():
     os.makedirs("artifacts", exist_ok=True)
@@ -28,28 +33,38 @@ def load_data():
     movie_url = f"https://drive.google.com/uc?id={movie_file_id}"
     similarity_url = f"https://drive.google.com/uc?id={similarity_file_id}"
 
-    if not os.path.exists(movie_file):
-        st.warning("Downloading movie data file...")
-        result = gdown.download(movie_url, movie_file, quiet=False, fuzzy=True)
-        if result is None or not os.path.exists(movie_file):
-            st.error("Failed to download movie file.")
-            st.stop()
+    with st.spinner("📥 Downloading movie file..."):
+        if not os.path.exists(movie_file):
+            result = gdown.download(movie_url, movie_file, quiet=False, fuzzy=True)
+            if result is None or not os.path.exists(movie_file):
+                st.error("❌ Failed to download movie file.")
+                st.stop()
+        else:
+            st.success("✅ Movie file ready.")
 
-    if not os.path.exists(similarity_file):
-        st.warning("Downloading similarity file...")
-        result = gdown.download(similarity_url, similarity_file, quiet=False, fuzzy=True)
-        if result is None or not os.path.exists(similarity_file):
-            st.error("Failed to download similarity file.")
-            st.stop()
+    with st.spinner("📥 Downloading similarity file..."):
+        if not os.path.exists(similarity_file):
+            result = gdown.download(similarity_url, similarity_file, quiet=False, fuzzy=True)
+            if result is None or not os.path.exists(similarity_file):
+                st.error("❌ Failed to download similarity file.")
+                st.stop()
+        else:
+            st.success("✅ Similarity file ready.")
 
     try:
         movies = joblib.load(movie_file)
+    except Exception as e:
+        st.error(f"❌ Could not load movie file: {e}")
+        st.stop()
+
+    try:
         similarity = joblib.load(similarity_file)
     except Exception as e:
-        st.error(f"Error loading joblib files: {e}")
+        st.error(f"❌ Could not load similarity file: {e}")
         st.stop()
 
     return movies, similarity
+
 
 # --- Sidebar ---
 with st.sidebar:
