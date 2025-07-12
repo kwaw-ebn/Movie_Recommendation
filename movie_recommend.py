@@ -22,29 +22,34 @@ def load_data():
     movie_file = "artifacts/movie_list_compressed.joblib"
     similarity_file = "artifacts/similarity_compressed.joblib"
 
-    # Your actual Google Drive file IDs
     movie_file_id = "1p_Y0LjDV8stiUaNsDZvzECJ6rydgt4yR"
     similarity_file_id = "1ojEtIeXADD8_s13QUfRT0Jzg68M3Y9I_"
 
-    # Construct downloadable URLs
     movie_url = f"https://drive.google.com/uc?id={movie_file_id}"
     similarity_url = f"https://drive.google.com/uc?id={similarity_file_id}"
 
-    # Download only if not already present
     if not os.path.exists(movie_file):
-        st.write("Downloading movie_list_compressed.joblib...")
-        gdown.download(movie_url, movie_file, quiet=False, fuzzy=True)
+        st.warning("Downloading movie data file...")
+        result = gdown.download(movie_url, movie_file, quiet=False, fuzzy=True)
+        if result is None or not os.path.exists(movie_file):
+            st.error("Failed to download movie file.")
+            st.stop()
 
     if not os.path.exists(similarity_file):
-        st.write("Downloading similarity_compressed.joblib...")
-        gdown.download(similarity_url, similarity_file, quiet=False, fuzzy=True)
+        st.warning("Downloading similarity file...")
+        result = gdown.download(similarity_url, similarity_file, quiet=False, fuzzy=True)
+        if result is None or not os.path.exists(similarity_file):
+            st.error("Failed to download similarity file.")
+            st.stop()
 
-    # Load and return
-    movies = joblib.load(movie_file)
-    similarity = joblib.load(similarity_file)
+    try:
+        movies = joblib.load(movie_file)
+        similarity = joblib.load(similarity_file)
+    except Exception as e:
+        st.error(f"Error loading joblib files: {e}")
+        st.stop()
 
     return movies, similarity
-
 
 # --- Sidebar ---
 with st.sidebar:
